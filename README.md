@@ -1,5 +1,14 @@
 # FitDesk
 
+```
+██╗    ██╗ ██████╗ ██████╗ ██╗  ██╗ ██████╗ ██╗   ██╗████████╗    ███╗   ██╗ ██████╗ ██╗    ██╗
+██║    ██║██╔═══██╗██╔══██╗██║ ██╔╝██╔═══██╗██║   ██║╚══██╔══╝    ████╗  ██║██╔═══██╗██║    ██║
+██║ █╗ ██║██║   ██║██████╔╝█████╔╝ ██║   ██║██║   ██║   ██║       ██╔██╗ ██║██║   ██║██║ █╗ ██║
+██║███╗██║██║   ██║██╔══██╗██╔═██╗ ██║   ██║██║   ██║   ██║       ██║╚██╗██║██║   ██║██║███╗██║
+╚███╔███╔╝╚██████╔╝██║  ██║██║  ██╗╚██████╔╝╚██████╔╝   ██║       ██║ ╚████║╚██████╔╝╚███╔███╔╝
+ ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝       ╚═╝  ╚═══╝ ╚═════╝  ╚══╝╚══╝
+```
+
 Micro-workouts to stay active while working at your desk.
 
 FitDesk helps you maintain an active lifestyle during long work sessions by providing quick, effective exercises that can be done right at your desk. No equipment needed!
@@ -48,3 +57,7 @@ Sitting for long periods is harmful to your health. FitDesk makes it easy to inc
 - Require no equipment
 - Can be done in your office or home workspace
 - Are suitable for all fitness levels
+
+---
+
+*Made with sweat, effort, and more than a few sore muscles.*

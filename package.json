@@ -4,6 +4,7 @@
   "description": "Micro-workouts to stay active while working",
   "icon": "extension-icon.png",
   "author": "rasheed_s",
+  "platforms": ["macOS"],
   "categories": ["Productivity", "Other"],
   "license": "MIT",
   "commands": [
@@ -12,21 +13,24 @@
       "title": "Start Workout",
       "subtitle": "FitDesk",
       "description": "Start a random micro-workout",
-      "mode": "view"
+      "mode": "view",
+      "keywords": ["exercise", "fitness", "break", "stretch", "health"]
     },
     {
       "name": "browse-exercises",
       "title": "Browse Exercises",
       "subtitle": "FitDesk",
       "description": "Browse all available exercises by category",
-      "mode": "view"
+      "mode": "view",
+      "keywords": ["catalog", "list", "workouts", "fitness", "browse"]
     },
     {
       "name": "view-statistics",
       "title": "View Statistics",
       "subtitle": "FitDesk",
       "description": "View your exercise history and statistics",
-      "mode": "view"
+      "mode": "view",
+      "keywords": ["stats", "history", "progress", "streak", "tracking"]
     },
     {
       "name": "exercise-reminder",
@@ -34,6 +38,7 @@
       "subtitle": "FitDesk",
       "description": "Menu bar reminder for exercise breaks",
       "mode": "menu-bar",
+      "keywords": ["notification", "alert", "timer", "reminder"],
       "preferences": [
         {
           "name": "reminderInterval",

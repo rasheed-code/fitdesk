@@ -62,11 +62,10 @@ export default function ViewStatistics() {
   const handleClearHistory = async () => {
     if (
       await confirmAlert({
-        title: "Borrar Historial",
-        message:
-          "¿Estás seguro de que quieres borrar todo el historial de ejercicios?",
+        title: "Clear History",
+        message: "Are you sure you want to clear all exercise history?",
         primaryAction: {
-          title: "Borrar",
+          title: "Clear",
           style: Alert.ActionStyle.Destructive,
         },
       })
@@ -90,7 +89,7 @@ export default function ViewStatistics() {
     .map((cat) => {
       const count = weeklyStats[cat] || 0;
       if (count === 0) return null;
-      return `- ${categoryIcons[cat]} ${categoryLabels[cat]}: **${count}** ejercicio${count !== 1 ? "s" : ""}`;
+      return `- ${categoryIcons[cat]} ${categoryLabels[cat]}: **${count}** exercise${count !== 1 ? "s" : ""}`;
     })
     .filter(Boolean)
     .join("\n");
@@ -100,11 +99,11 @@ export default function ViewStatistics() {
     .slice(0, 5)
     .map((e) => {
       const date = new Date(e.completedAt);
-      const timeStr = date.toLocaleTimeString("es-ES", {
+      const timeStr = date.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
       });
-      const dateStr = date.toLocaleDateString("es-ES", {
+      const dateStr = date.toLocaleDateString("en-US", {
         weekday: "short",
         day: "numeric",
         month: "short",
@@ -117,67 +116,67 @@ export default function ViewStatistics() {
   // Motivational message based on streak
   let streakMessage = "";
   if (streak === 0) {
-    streakMessage = "Empieza hoy tu racha de ejercicios!";
+    streakMessage = "Start your exercise streak today!";
   } else if (streak === 1) {
-    streakMessage = "Buen comienzo! Mantén el ritmo mañana.";
+    streakMessage = "Great start! Keep it going tomorrow.";
   } else if (streak < 7) {
-    streakMessage = `${streak} días seguidos! Vas por buen camino.`;
+    streakMessage = `${streak} days in a row! You're on the right track.`;
   } else if (streak < 30) {
-    streakMessage = `${streak} días! Eres imparable!`;
+    streakMessage = `${streak} days! You're unstoppable!`;
   } else {
-    streakMessage = `${streak} días! Eres una leyenda del fitness!`;
+    streakMessage = `${streak} days! You're a fitness legend!`;
   }
 
   const markdown = `
-# Estadísticas de FitDesk
+# FitDesk Statistics
 
-## Resumen
+## Summary
 
-| Período | Ejercicios |
-|---------|------------|
-| Hoy | **${today.length}** |
-| Esta semana | **${thisWeek.length}** |
-| Este mes | **${thisMonth.length}** |
-| Total histórico | **${history.length}** |
+| Period | Exercises |
+|--------|-----------|
+| Today | **${today.length}** |
+| This week | **${thisWeek.length}** |
+| This month | **${thisMonth.length}** |
+| All time | **${history.length}** |
 
 ---
 
-## Racha Actual
+## Current Streak
 
-# ${streak} ${streak === 1 ? "día" : "días"} 🔥
+# ${streak} ${streak === 1 ? "day" : "days"} 🔥
 
 *${streakMessage}*
 
 ---
 
-## Esta Semana
+## This Week
 
 ${
   thisWeek.length > 0
     ? `
-**Tiempo total:** ${formatDuration(totalDurationWeek)}
+**Total time:** ${formatDuration(totalDurationWeek)}
 
-**Repeticiones totales:** ${totalRepsWeek}
+**Total reps:** ${totalRepsWeek}
 
-### Por Categoría
+### By Category
 
-${categoryBreakdown || "*Sin ejercicios esta semana*"}
+${categoryBreakdown || "*No exercises this week*"}
 `
-    : "*No has hecho ejercicios esta semana. Es hora de empezar!*"
+    : "*You haven't exercised this week. Time to start!*"
 }
 
 ---
 
-## Últimos Ejercicios
+## Recent Exercises
 
 ${
   history.length > 0
     ? `
-| Ejercicio | Cantidad | Fecha |
-|-----------|----------|-------|
+| Exercise | Amount | Date |
+|----------|--------|------|
 ${recentExercises}
 `
-    : "*No hay ejercicios en el historial*"
+    : "*No exercises in history*"
 }
 `;
 
@@ -188,14 +187,14 @@ ${recentExercises}
       actions={
         <ActionPanel>
           <Action
-            title="Actualizar"
+            title="Refresh"
             icon={Icon.ArrowClockwise}
             onAction={loadHistory}
             shortcut={{ modifiers: ["cmd"], key: "r" }}
           />
           {history.length > 0 && (
             <Action
-              title="Borrar Historial"
+              title="Clear History"
               icon={Icon.Trash}
               style={Action.Style.Destructive}
               onAction={handleClearHistory}

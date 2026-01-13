@@ -80,7 +80,7 @@ export default function ExerciseReminder() {
 
       if (minutesSinceLastReminder >= settings.intervalMinutes) {
         // Time for a reminder!
-        await showHUD("Es hora de hacer ejercicio! 💪");
+        await showHUD("Time to exercise! 💪");
 
         // Update last reminder time
         const newSettings = { ...settings, lastReminder: now.toISOString() };
@@ -107,10 +107,10 @@ export default function ExerciseReminder() {
 
     if (newSettings.enabled) {
       await showHUD(
-        `Recordatorios activados cada ${settings.intervalMinutes} minutos`,
+        `Reminders enabled every ${settings.intervalMinutes} minutes`,
       );
     } else {
-      await showHUD("Recordatorios desactivados");
+      await showHUD("Reminders disabled");
     }
   };
 
@@ -121,7 +121,7 @@ export default function ExerciseReminder() {
         type: LaunchType.UserInitiated,
       });
     } catch {
-      await open("raycast://extensions/rasheed/fitdesk/start-workout");
+      await open("raycast://extensions/rasheed_s/fitdesk/start-workout");
     }
   };
 
@@ -132,7 +132,7 @@ export default function ExerciseReminder() {
         type: LaunchType.UserInitiated,
       });
     } catch {
-      await open("raycast://extensions/rasheed/fitdesk/view-statistics");
+      await open("raycast://extensions/rasheed_s/fitdesk/view-statistics");
     }
   };
 
@@ -144,43 +144,39 @@ export default function ExerciseReminder() {
     <MenuBarExtra icon={menuIcon} title={title} isLoading={isLoading}>
       <MenuBarExtra.Section>
         <MenuBarExtra.Item
-          title={`Hoy: ${todayCount} ejercicio${todayCount !== 1 ? "s" : ""}`}
+          title={`Today: ${todayCount} exercise${todayCount !== 1 ? "s" : ""}`}
           icon={Icon.Calendar}
         />
         <MenuBarExtra.Item
-          title={`Racha: ${streak} día${streak !== 1 ? "s" : ""}`}
+          title={`Streak: ${streak} day${streak !== 1 ? "s" : ""}`}
           icon="🔥"
         />
       </MenuBarExtra.Section>
 
       <MenuBarExtra.Section>
         <MenuBarExtra.Item
-          title="Empezar Ejercicio"
+          title="Start Exercise"
           icon={Icon.Play}
           shortcut={{ modifiers: ["cmd"], key: "e" }}
           onAction={startWorkout}
         />
         <MenuBarExtra.Item
-          title="Ver Estadísticas"
+          title="View Statistics"
           icon={Icon.BarChart}
           shortcut={{ modifiers: ["cmd"], key: "s" }}
           onAction={viewStats}
         />
       </MenuBarExtra.Section>
 
-      <MenuBarExtra.Section title="Recordatorios">
+      <MenuBarExtra.Section title="Reminders">
         <MenuBarExtra.Item
-          title={
-            settings?.enabled
-              ? "Desactivar Recordatorios"
-              : "Activar Recordatorios"
-          }
+          title={settings?.enabled ? "Disable Reminders" : "Enable Reminders"}
           icon={settings?.enabled ? Icon.BellDisabled : Icon.Bell}
           onAction={toggleReminders}
         />
         {settings?.enabled && (
           <MenuBarExtra.Item
-            title={`Cada ${settings.intervalMinutes} minutos`}
+            title={`Every ${settings.intervalMinutes} minutes`}
             icon={Icon.Clock}
           />
         )}

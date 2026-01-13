@@ -27,7 +27,7 @@ function getExerciseMarkdown(exercise: Exercise): string {
   const categoryLabel = categoryLabels[exercise.category];
   const amountText =
     exercise.type === "reps"
-      ? `**${exercise.amount} repeticiones**`
+      ? `**${exercise.amount} reps**`
       : `**${formatAmount(exercise)}**`;
 
   const gifSection = exercise.gif
@@ -37,13 +37,13 @@ function getExerciseMarkdown(exercise: Exercise): string {
   return `
 # ${categoryIcon} ${exercise.name}
 
-**Categoría:** ${categoryLabel}
+**Category:** ${categoryLabel}
 
-**Objetivo:** ${amountText}
+**Goal:** ${amountText}
 ${gifSection}
 ---
 
-## Descripción
+## Description
 
 ${exercise.description}
 
@@ -68,15 +68,15 @@ export default function BrowseExercises() {
   return (
     <List
       isShowingDetail
-      searchBarPlaceholder="Buscar ejercicio..."
+      searchBarPlaceholder="Search exercise..."
       searchBarAccessory={
         <List.Dropdown
-          tooltip="Filtrar por categoría"
+          tooltip="Filter by category"
           value={selectedCategory}
           onChange={(value) => setSelectedCategory(value as Category | "all")}
         >
-          <List.Dropdown.Item title="Todos" value="all" icon={Icon.List} />
-          <List.Dropdown.Section title="Categorías">
+          <List.Dropdown.Item title="All" value="all" icon={Icon.List} />
+          <List.Dropdown.Section title="Categories">
             {(
               ["upper", "core", "lower", "cardio", "full-body"] as Category[]
             ).map((cat) => (
@@ -100,7 +100,7 @@ export default function BrowseExercises() {
           actions={
             <ActionPanel>
               <Action.Push
-                title="Empezar Ejercicio"
+                title="Start Exercise"
                 icon={Icon.Play}
                 target={
                   <ExerciseSession
@@ -111,7 +111,7 @@ export default function BrowseExercises() {
                 }
               />
               <Action.CopyToClipboard
-                title="Copiar Descripción"
+                title="Copy Description"
                 content={`${exercise.name}: ${exercise.description}`}
                 shortcut={{ modifiers: ["cmd"], key: "c" }}
               />

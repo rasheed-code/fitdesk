@@ -116,16 +116,16 @@ export function ExerciseSession({
 
   const amountText =
     exercise.type === "reps"
-      ? `**${exercise.amount} repeticiones**`
+      ? `**${exercise.amount} reps**`
       : `**${formatTime(exercise.amount)}**`;
 
   // Build timer/status section
   let timerSection = "";
 
   if (phase === "ready") {
-    timerSection = `\n\n---\n\n*Presiona "Empezar" cuando estés listo*`;
+    timerSection = `\n\n---\n\n*Press "Start" when you're ready*`;
   } else if (phase === "preparing") {
-    timerSection = `\n\n---\n\n# Prepárate!\n\n## ${prepTime}\n\n*El ejercicio comienza en ${prepTime} segundo${prepTime !== 1 ? "s" : ""}...*`;
+    timerSection = `\n\n---\n\n# Get Ready!\n\n## ${prepTime}\n\n*Exercise starts in ${prepTime} second${prepTime !== 1 ? "s" : ""}...*`;
   } else if (phase === "exercising") {
     if (exercise.type === "time") {
       const progress = Math.round(
@@ -134,12 +134,12 @@ export function ExerciseSession({
       const progressBar =
         "█".repeat(Math.floor(progress / 5)) +
         "░".repeat(20 - Math.floor(progress / 5));
-      timerSection = `\n\n---\n\n# Tiempo restante\n\n## ${formatTime(timeLeft)}\n\n\`${progressBar}\` ${progress}%`;
+      timerSection = `\n\n---\n\n# Time Remaining\n\n## ${formatTime(timeLeft)}\n\n\`${progressBar}\` ${progress}%`;
     } else {
-      timerSection = `\n\n---\n\n# A por ello!\n\nCompleta **${exercise.amount} repeticiones**\n\n*Pulsa "Completado" cuando termines*`;
+      timerSection = `\n\n---\n\n# Let's Go!\n\nComplete **${exercise.amount} reps**\n\n*Press "Done" when finished*`;
     }
   } else if (phase === "completed") {
-    timerSection = `\n\n---\n\n# Completado!\n\nBuen trabajo! Has terminado el ejercicio.`;
+    timerSection = `\n\n---\n\n# Complete!\n\nGreat job! You finished the exercise.`;
   }
 
   const gifSection = exercise.gif
@@ -149,14 +149,14 @@ export function ExerciseSession({
   const markdown = `
 # ${categoryIcon} ${exercise.name}
 
-**Categoría:** ${categoryLabel}
+**Category:** ${categoryLabel}
 
-**Objetivo:** ${amountText}
+**Goal:** ${amountText}
 ${timerSection}
 ${gifSection}
 ---
 
-## Descripción
+## Description
 
 ${exercise.description}
 
@@ -173,24 +173,24 @@ ${exercise.tips.map((tip) => `- ${tip}`).join("\n")}
       actions={
         <ActionPanel>
           {phase === "ready" && (
-            <Action title="Empezar" icon={Icon.Play} onAction={startExercise} />
+            <Action title="Start" icon={Icon.Play} onAction={startExercise} />
           )}
           {phase === "exercising" && exercise.type === "reps" && (
             <Action
-              title="Completado"
+              title="Done"
               icon={Icon.CheckCircle}
               onAction={handleComplete}
             />
           )}
           {phase === "completed" && (
-            <Action title="Volver" icon={Icon.ArrowLeft} onAction={pop} />
+            <Action title="Back" icon={Icon.ArrowLeft} onAction={pop} />
           )}
           {showAnotherButton &&
             phase !== "preparing" &&
             phase !== "completed" &&
             onAnotherExercise && (
               <Action
-                title="Otro Ejercicio"
+                title="Another Exercise"
                 icon={Icon.ArrowClockwise}
                 onAction={onAnotherExercise}
                 shortcut={{ modifiers: ["cmd"], key: "n" }}
@@ -198,7 +198,7 @@ ${exercise.tips.map((tip) => `- ${tip}`).join("\n")}
             )}
           {phase === "ready" && (
             <Action
-              title="Cancelar"
+              title="Cancel"
               icon={Icon.XMarkCircle}
               onAction={pop}
               shortcut={{ modifiers: ["cmd"], key: "w" }}

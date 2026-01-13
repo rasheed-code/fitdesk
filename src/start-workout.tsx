@@ -1,11 +1,12 @@
 import { Action, ActionPanel, Detail, Icon, useNavigation } from "@raycast/api";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Exercise,
   getRandomExercise,
   categoryLabels,
   categoryIcons,
 } from "./exercises";
+import { addExerciseToHistory, CompletedExercise } from "./storage";
 
 const PREPARATION_TIME = 10;
 
@@ -34,6 +35,23 @@ function ExerciseView({
   const [phase, setPhase] = useState<Phase>("ready");
   const [prepTime, setPrepTime] = useState(PREPARATION_TIME);
   const [timeLeft, setTimeLeft] = useState(exercise.amount);
+  const savedToHistory = useRef(false);
+
+  const saveToHistory = useCallback(async () => {
+    if (savedToHistory.current) return;
+    savedToHistory.current = true;
+
+    const completed: CompletedExercise = {
+      exerciseId: exercise.id,
+      exerciseName: exercise.name,
+      category: exercise.category,
+      completedAt: new Date().toISOString(),
+      ...(exercise.type === "time"
+        ? { duration: exercise.amount }
+        : { reps: exercise.amount }),
+    };
+    await addExerciseToHistory(completed);
+  }, [exercise]);
 
   const startExercise = useCallback(() => {
     setPhase("preparing");
@@ -62,6 +80,7 @@ function ExerciseView({
     if (phase !== "exercising" || exercise.type !== "time") return;
 
     if (timeLeft <= 0) {
+      saveToHistory();
       setPhase("completed");
       onComplete();
       return;
@@ -72,9 +91,10 @@ function ExerciseView({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [timeLeft, phase, exercise.type, onComplete]);
+  }, [timeLeft, phase, exercise.type, onComplete, saveToHistory]);
 
   const handleComplete = () => {
+    saveToHistory();
     setPhase("completed");
     onComplete();
   };
@@ -84,16 +104,16 @@ function ExerciseView({
 
   const amountText =
     exercise.type === "reps"
-      ? `**${exercise.amount} repeticiones**`
+      ? `**${exercise.amount} reps**`
       : `**${formatTime(exercise.amount)}**`;
 
   // Build timer/status section
   let timerSection = "";
 
   if (phase === "ready") {
-    timerSection = `\n\n---\n\n*Presiona "Empezar" cuando estés listo*`;
+    timerSection = `\n\n---\n\n*Press "Start" when you're ready*`;
   } else if (phase === "preparing") {
-    timerSection = `\n\n---\n\n# Prepárate!\n\n## ${prepTime}\n\n*El ejercicio comienza en ${prepTime} segundo${prepTime !== 1 ? "s" : ""}...*`;
+    timerSection = `\n\n---\n\n# Get Ready!\n\n## ${prepTime}\n\n*Exercise starts in ${prepTime} second${prepTime !== 1 ? "s" : ""}...*`;
   } else if (phase === "exercising") {
     if (exercise.type === "time") {
       const progress = Math.round(
@@ -102,25 +122,25 @@ function ExerciseView({
       const progressBar =
         "█".repeat(Math.floor(progress / 5)) +
         "░".repeat(20 - Math.floor(progress / 5));
-      timerSection = `\n\n---\n\n# Tiempo restante\n\n## ${formatTime(timeLeft)}\n\n\`${progressBar}\` ${progress}%`;
+      timerSection = `\n\n---\n\n# Time Remaining\n\n## ${formatTime(timeLeft)}\n\n\`${progressBar}\` ${progress}%`;
     } else {
-      timerSection = `\n\n---\n\n# A por ello!\n\nCompleta **${exercise.amount} repeticiones**\n\n*Pulsa "Completado" cuando termines*`;
+      timerSection = `\n\n---\n\n# Let's Go!\n\nComplete **${exercise.amount} reps**\n\n*Press "Done" when finished*`;
     }
   } else if (phase === "completed") {
-    timerSection = `\n\n---\n\n# Completado!\n\nBuen trabajo! Has terminado el ejercicio.`;
+    timerSection = `\n\n---\n\n# Complete!\n\nGreat job! You finished the exercise.`;
   }
 
   const markdown = `
 # ${categoryIcon} ${exercise.name}
 
-**Categoría:** ${categoryLabel}
+**Category:** ${categoryLabel}
 
-**Objetivo:** ${amountText}
+**Goal:** ${amountText}
 ${timerSection}
 
 ---
 
-## Descripción
+## Description
 
 ${exercise.description}
 
@@ -137,18 +157,18 @@ ${exercise.tips.map((tip) => `- ${tip}`).join("\n")}
       actions={
         <ActionPanel>
           {phase === "ready" && (
-            <Action title="Empezar" icon={Icon.Play} onAction={startExercise} />
+            <Action title="Start" icon={Icon.Play} onAction={startExercise} />
           )}
           {phase === "exercising" && exercise.type === "reps" && (
             <Action
-              title="Completado"
+              title="Done"
               icon={Icon.CheckCircle}
               onAction={handleComplete}
             />
           )}
           {phase !== "preparing" && phase !== "completed" && (
             <Action
-              title="Otro Ejercicio"
+              title="Another Exercise"
               icon={Icon.ArrowClockwise}
               onAction={onNewExercise}
               shortcut={{ modifiers: ["cmd"], key: "n" }}
@@ -156,7 +176,7 @@ ${exercise.tips.map((tip) => `- ${tip}`).join("\n")}
           )}
           {phase === "ready" && (
             <Action
-              title="Saltar"
+              title="Skip"
               icon={Icon.Forward}
               onAction={onSkip}
               shortcut={{ modifiers: ["cmd"], key: "s" }}
@@ -178,13 +198,13 @@ function CompletedView({
   onFinish: () => void;
 }) {
   const markdown = `
-# Ejercicio Completado!
+# Exercise Complete!
 
-Has completado **${exercisesCompleted}** ejercicio${exercisesCompleted > 1 ? "s" : ""} en esta sesión.
+You've completed **${exercisesCompleted}** exercise${exercisesCompleted > 1 ? "s" : ""} in this session.
 
 ---
 
-Quieres continuar con otro ejercicio o terminar la sesión?
+Would you like to continue with another exercise or end the session?
 `;
 
   return (
@@ -193,15 +213,11 @@ Quieres continuar con otro ejercicio o terminar la sesión?
       actions={
         <ActionPanel>
           <Action
-            title="Continuar Con Otro"
+            title="Continue with Another"
             icon={Icon.Play}
             onAction={onContinue}
           />
-          <Action
-            title="Terminar Sesión"
-            icon={Icon.Stop}
-            onAction={onFinish}
-          />
+          <Action title="End Session" icon={Icon.Stop} onAction={onFinish} />
         </ActionPanel>
       }
     />
@@ -212,26 +228,26 @@ function SummaryView({ exercisesCompleted }: { exercisesCompleted: number }) {
   const { pop } = useNavigation();
 
   const messages = [
-    "Cada movimiento cuenta!",
-    "Tu cuerpo te lo agradece!",
-    "Constancia es la clave!",
-    "Pequeños pasos, grandes resultados!",
-    "Sigue así!",
+    "Every movement counts!",
+    "Your body thanks you!",
+    "Consistency is key!",
+    "Small steps, big results!",
+    "Keep it up!",
   ];
   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
 
   const markdown = `
-# Sesión Completada!
+# Session Complete!
 
-## Resumen
+## Summary
 
-- **Ejercicios realizados:** ${exercisesCompleted}
+- **Exercises completed:** ${exercisesCompleted}
 
 ---
 
 *${randomMessage}*
 
-Nos vemos en el próximo descanso!
+See you on the next break!
 `;
 
   return (
@@ -239,7 +255,7 @@ Nos vemos en el próximo descanso!
       markdown={markdown}
       actions={
         <ActionPanel>
-          <Action title="Cerrar" icon={Icon.XMarkCircle} onAction={pop} />
+          <Action title="Close" icon={Icon.XMarkCircle} onAction={pop} />
         </ActionPanel>
       }
     />
